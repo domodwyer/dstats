@@ -9,6 +9,10 @@ import (
 	"google.golang.org/grpc/benchmark/stats"
 )
 
+// HistogramOptions aliases stats.HistogramOptions to play nicely with
+// vendoring.
+type HistogramOptions stats.HistogramOptions
+
 // Histogram is a splitable extension of Google's grpc stats.Histogram.
 //
 // Histogram cannot be used concurrently, so Split children and Merge them for
@@ -112,9 +116,9 @@ func (h *Histogram) WriteCSV(w io.Writer) error {
 }
 
 // NewHistogram returns a Histogram configured using opts.
-func NewHistogram(opts stats.HistogramOptions) *Histogram {
+func NewHistogram(opts HistogramOptions) *Histogram {
 	return &Histogram{
-		Histogram: *stats.NewHistogram(opts),
+		Histogram: *stats.NewHistogram((stats.HistogramOptions)(opts)),
 		children:  make(chan *stats.Histogram),
 	}
 }
